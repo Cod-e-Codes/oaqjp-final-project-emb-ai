@@ -1,9 +1,4 @@
-"""
-This module defines a Flask web server that serves an emotion detection API.
-It processes text input and returns emotion analysis using the Watson Emotion API.
-"""
-
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from EmotionDetection import emotion_detector
 
 # Create the Flask app
@@ -13,9 +8,9 @@ app = Flask(__name__)
 def home():
     """
     Root route to confirm the app is running.
-    Returns a simple message indicating the API is working.
+    Returns the index.html template with the form.
     """
-    return "Emotion Detection API is running. Send a POST request to /emotionDetector."
+    return render_template('index.html')
 
 @app.route('/emotionDetector', methods=['POST'])
 def emotion_detector_route():
@@ -49,6 +44,7 @@ def emotion_detector_route():
 
     # Return the response
     return jsonify({"response": response_message})
+
 
 if __name__ == '__main__':
     # Start the Flask web server.

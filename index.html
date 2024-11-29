@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Emotion Detection</h1>
+    <div class="container">
+        <h2>Enter Text for Emotion Detection</h2>
+        <form id="emotion-form">
+            <textarea id="text-input" placeholder="Enter text..." required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        document.getElementById("emotion-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const textInput = document.getElementById("text-input").value;
+            fetch("/emotionDetector", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ text: textInput })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const responseDiv = document.getElementById("response");
+                    if (data.error) {
+                        responseDiv.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+                    } else {
+                        responseDiv.innerHTML = `<p><strong>Response:</strong> ${data.response}</p>`;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("response").innerHTML = `<p style="color: red;">Error: ${error}</p>`;
+                });
+        });
+    </script>
+
+</body>
+
+</html>
