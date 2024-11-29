@@ -1,27 +1,29 @@
 let RunSentimentAnalysis = () => {
     let textToAnalyze = document.getElementById("textToAnalyze").value;
 
-    // Create the data object for the POST request
-    let data = {
-        text: textToAnalyze
-    };
+    // Check if input is empty
+    if (!textToAnalyze.trim()) {
+        document.getElementById("system_response").innerHTML = `<div class="alert alert-danger">Invalid input! Please provide text to be analyzed.</div>`;
+        return; // Prevent further execution if input is empty
+    }
 
-    // Create an XMLHttpRequest for the POST request
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            // Display the response text in the system_response div
-            document.getElementById("system_response").innerHTML = JSON.parse(this.responseText).response;
-        } else if (this.readyState == 4 && this.status == 400) {
-            // Display error message if no text is provided
-            document.getElementById("system_response").innerHTML = "Error: No text provided!";
+        if (this.readyState == 4) {
+            // Check if the response status is 200 (success)
+            if (this.status == 200) {
+                document.getElementById("system_response").innerHTML = this.responseText;
+            } else {
+                // If not 200, display the error message
+                let errorResponse = JSON.parse(this.responseText); // Parse the JSON error response
+                document.getElementById("system_response").innerHTML = `<div class="alert alert-danger">${errorResponse.error}</div>`;
+            }
         }
     };
 
-    // Open the POST request and set the correct headers
     xhttp.open("POST", "/emotionDetector", true);
     xhttp.setRequestHeader("Content-Type", "application/json");
 
-    // Send the request with the JSON data
-    xhttp.send(JSON.stringify(data));
-}
+    // Send the text as JSON in the body of the request
+    xhttp.send(JSON.stringify({ text: textToAnalyze }));
+};
